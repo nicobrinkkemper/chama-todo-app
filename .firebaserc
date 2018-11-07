@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "develop": "chama-hooks",
+    "default": "chama-hooks"
+  }
+}

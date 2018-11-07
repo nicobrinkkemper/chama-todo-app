@@ -1,0 +1,9 @@
+.speaking {
+    animation: blinker .5s infinite alternate;
+}
+
+@keyframes blinker {
+    to {
+        transform: scale(1.1,1.1);
+    }
+}
