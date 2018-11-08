@@ -1,6 +1,7 @@
 import React from 'react';
+import { AlertList } from "react-bs-notifier";
 
-export const BottomNav = ({ logout, login, uid, app }) => {
+export const BottomNav = ({ logout, login, uid, app, removeNotification }) => {
     return (
         <div className="row">
             <div className="col-md-12"><hr /></div>
@@ -18,6 +19,7 @@ export const BottomNav = ({ logout, login, uid, app }) => {
                     </div>
                 </div>
             </div>
+            <AlertList position={'bottom-right'} timeout={3000} alerts={app.notifications} onDismiss={(alert)=>removeNotification(alert.id)} />
         </div>
     )
 }

@@ -5,6 +5,8 @@ import { PRIORITY_COLOR, PRIORITY } from "../constants";
 import { START_TIMER, STOP_TIMER } from 'redux-timer-middleware';
 // ACTION TYPES
 const UPDATE_TIME_FIELDS = 'UPDATE_TIME_FIELDS'
+const NOTIFICATION = 'NOTIFICATION'
+const REMOVE_NOTIFICATION = 'REMOVE_NOTIFICATION'
 
 // SELECTORS
 export const sortPriority = (a, b) => b.priority - a.priority
@@ -59,6 +61,22 @@ export function createStopTimer() {
         type: STOP_TIMER,
         payload: {
             timerName: 'updateTimeFields',
+        }
+    }
+}
+export function createRemoveNotification(id) {
+    return {
+        type: REMOVE_NOTIFICATION,
+        payload: id
+    }
+}
+export function createNotification(fbPayload) {
+    return {
+        type: NOTIFICATION,
+        payload: {
+            id: fbPayload.from,
+            type: 'warning',
+            message: fbPayload.data.title
         }
     }
 }
@@ -122,7 +140,7 @@ function path(state, action) {
     }
     switch (action.path) {
         case 'todos':
-            if(!action.data.hasOwnProperty(state.uid)){
+            if (!action.data.hasOwnProperty(state.uid)) {
                 return state;
             }
             return {
@@ -150,7 +168,8 @@ export function app(state = {
     uid: undefined,
     userFieldId: undefined,
     todos: {},
-    currentTime: Date.now()
+    currentTime: Date.now(),
+    notifications: []
 }, action = {}) {
     switch (action.type) {
         case UPDATE_TIME_FIELDS:
@@ -158,6 +177,16 @@ export function app(state = {
                 ...state,
                 currentTime: Date.now(),
                 todos: todos(state.todos, { ...action, todos: state.todos })
+            }
+        case NOTIFICATION:
+            return {
+                ...state,
+                notifications: [...state.notifications, action.payload]
+            }
+        case REMOVE_NOTIFICATION:
+            return {
+                ...state,
+                notifications: state.notifications.filter(v => v.id !== action.payload)
             }
         case actionTypes.LOGOUT:
             return {
@@ -175,7 +204,7 @@ export function app(state = {
             };
         case actionTypes.SET:
             if (!action) return state;
-            if(!action.path) return state;
+            if (!action.path) return state;
             return path(state, action)
         default:
             return state;

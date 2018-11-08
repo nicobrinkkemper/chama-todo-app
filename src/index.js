@@ -10,7 +10,7 @@ import { BottomNav } from "./components/BottomNav";
 import { firebaseConnect } from "react-redux-firebase";
 import { compose } from 'redux';
 import { connect } from 'react-redux'
-import { selectTodos, createTodo, createTimer, createStopTimer } from "./redux/app";
+import { selectTodos, createTodo, createTimer, createStopTimer, createNotification, createRemoveNotification } from "./redux/app";
 import { sendNotifications, messaging } from "./firebase/firebase";
 
 
@@ -57,6 +57,9 @@ export const App = compose(
       logout: () => {
         firebase.logout()
       },
+      removeNotification: (id) => {
+        dispatch(createRemoveNotification(id))
+      },
       notify: sendNotifications,
       setFCM: (fcm, userFieldId) => {
         console.log('set token')
@@ -83,12 +86,15 @@ export const App = compose(
         dispatch(createStopTimer())
       },
       setUpMessaging: (userFieldId, onReceiveToken) => {
-        messaging.onTokenRefresh(()=>{
+        messaging.onTokenRefresh(() => {
           messaging.getToken().then(function (refreshedToken) {
             onReceiveToken(refreshedToken, userFieldId)
           }).catch(function (err) {
             console.log('Unable to retrieve refreshed token ', err);
           });
+        });
+        messaging.onMessage((payload) => {
+          dispatch(createNotification(payload))
         });
         messaging
           .requestPermission()
@@ -106,7 +112,8 @@ export const App = compose(
             }
           });
         return () => {
-          messaging.onTokenRefresh(undefined)
+          messaging.onMessage(()=>{})
+          messaging.onTokenRefresh(()=>{})
         };
       }
     })

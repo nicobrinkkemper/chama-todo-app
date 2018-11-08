@@ -7,7 +7,7 @@ export function TodoController(props) {
         () => {
             if (props.datetimecolor === 'warning') notify()
         },
-        [props.datetimecolor]
+        [props.datetimetext]
     )
     const badges = [
         {

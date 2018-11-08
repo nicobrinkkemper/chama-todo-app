@@ -1,5 +1,5 @@
 export const PRIORITY = [
-    'Noteworhty',
+    'Noteworthy',
     'Significant',
     'Important'
 ]

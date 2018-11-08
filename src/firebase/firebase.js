@@ -17,6 +17,7 @@ export const database = firebase.database();
 export const provider = new firebase.auth.GoogleAuthProvider();
 export const auth = firebase.auth();
 export const messaging = firebase.messaging();
+messaging.usePublicVapidKey("BN8krSM0CRd6YdRwSXa1xosJyF0236U39Ftk27Rr7lnkrLtsAba9XQ4cUSGyQMkzRkhEJ7iaR1p6WOjHFNRRdu0");
 export const sendNotifications = firebase.functions().httpsCallable('sendNotifications')
 export const fire = firebase;
 export default firebase;
