@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { TodoFormView } from "./TodoFormView/TodoFormView";
-import { defaultTodo } from "../../redux/app";
 
-export const TodoFormController = ({ addTodo, uid, firebase }) => {
-  const [todo, setTodo] = useState(defaultTodo);
+export const TodoFormController = ({ addTodo, profile, login, uid }) => {
+  const [todo, setTodo] = useState({
+    text:'',
+    priority: 0,
+    datetime: new Date()
+  });
 
   function onTextChange(e) {
     setTodo({
@@ -25,8 +28,12 @@ export const TodoFormController = ({ addTodo, uid, firebase }) => {
   }
 
   function onAdd() {
-    if (todo.text === "") return;
-    let r = addTodo(todo, uid, firebase)
+    if (todo.text === "" || profile.isLoading) return;
+    if(profile.isEmpty){
+      login()
+      return;
+    }
+    let r = addTodo(todo, uid)
     if (!r) return;
     setTodo({
       ...todo,

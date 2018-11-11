@@ -3,12 +3,8 @@ const admin = require('firebase-admin');
 
 admin.initializeApp();
 
-/**
- * When requested this Function will delete every user accounts that has been inactive for 30 days.
- * The request needs to be authorized by passing a 'key' query parameter in the URL. This key must
- * match a key set as an environment variable using `firebase functions:config:set cron.key="YOUR_KEY"`.
- */
-exports.sendNotifications = functions.https.onCall(onTick)
+
+exports.sendNotifications = functions.https.onCall(doSend)
 
 const payloadCreator = (data) => (deviceToken) => ({
     token: deviceToken,
@@ -24,21 +20,26 @@ const payloadCreator = (data) => (deviceToken) => ({
         click_action: "https://chama-hooks.firebaseapp.com/"
     }
 });
-const notificationSender = (data) => (obj) => admin.messaging().send(obj).then(
-    response => {
-        console.log('Run successful:', response);
-        return response;
-    })
+const notificationSender = (data, context) => (obj) => admin.messaging()
+    .send(obj)
+    .then(
+        response => {
+            console.log('Run successful:', response);
+            return response;
+        })
     .catch(
         error => {
-            admin.database().ref(`users/${data.userFieldId}/notificationTokens/${obj.token}`).set(false)
+            admin.database().ref(`notificationTokens/${context.auth.uid}/${obj.token}`).set(false)
             console.log('Removed token:', error);
         });
 
-function onTick(data, context) {
+
+function doSend(data, context) {
     const createPayload = payloadCreator(data, context);
     const sendNotification = notificationSender(data, context);
-    return admin.database().ref(`users/${data.userFieldId}/notificationTokens/`).once('value')
+    return admin.database()
+        .ref(`notificationTokens/${context.auth.uid}`)
+        .once('value')
         .then(tokens => {
             if (!tokens.hasChildren()) {
                 console.warn('no-tokens')

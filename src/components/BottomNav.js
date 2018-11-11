@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlertList } from "react-bs-notifier";
 
-export const BottomNav = ({ logout, login, uid, app, removeNotification }) => {
+export const BottomNav = ({ logout, login, uid, notifications, displayName, removeNotification, profile }) => {
     return (
         <div className="row">
             <div className="col-md-12"><hr /></div>
@@ -13,13 +13,13 @@ export const BottomNav = ({ logout, login, uid, app, removeNotification }) => {
                                 ? (
                                     <button className="btn btn-success" onClick={() => login()}>Login</button>
                                 ) : (
-                                    <button className="btn btn-danger" onClick={() => logout()}>Logout {app.user.displayName}</button>
+                                    <button className="btn btn-danger" onClick={() => logout()}>Logout {profile.displayName}</button>
                                 )
                         }
                     </div>
                 </div>
             </div>
-            <AlertList position={'bottom-right'} timeout={3000} alerts={app.notifications} onDismiss={(alert)=>removeNotification(alert.id)} />
+            <AlertList position={'bottom-right'} timeout={3000} alerts={notifications || []} onDismiss={(alert) => removeNotification(alert.id)} />
         </div>
     )
 }
