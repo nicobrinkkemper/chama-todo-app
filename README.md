@@ -17,7 +17,14 @@ Make sure to allow noticiations. Don't worry, it will only do so when you look a
 
 ## Design choises
 
-- React
-    - All React components are just functions. The Controllers use a popular new React feature called [hooks](https://www.youtube.com/watch?v=dpw9EHDh2bM). The hooks allow state management and effects inside functional components. For example, the TodoFormController uses `useState` to keep temporary form state, only hitting Redux/Firebase when a Todo is submitted. Furthermore, the TodoController uses `useEffect` to send a notification when a Todo is upcomming in 5 minutes. Ideally the sending of notications should be entirely done on the backend (e.g. a Firebase function), but for this demo it should only work when the user is looking at the screen.
-- Redux
-    - 
+### Hooks
+
+Controllers use a popular new React feature called [hooks](https://www.youtube.com/watch?v=dpw9EHDh2bM) to allow state management and effects inside functional components. For example, the TodoFormController uses `useState` to keep temporary form state, only hitting Redux/Firebase when a Todo is submitted. Furthermore, the TodoController uses `useEffect` to send a notification when a Todo is upcomming in 5 minutes. Lastly, our main App component uses `useEffect` to start-up a global timer to update the timefields, and starts up cloud messaging feature.
+
+### Redux
+
+Most part of redux is handled by [react-firebase-redux](https://github.com/prescottprue/react-redux-firebase). This is why the `profile` and `todos` modules only contain some selectors and creators. Cloud messaging is handled by the `notifications` module and is just a simple array that gets put in to [react-bs-notifier](https://github.com/chadly/react-bs-notifier) to show the alert.
+
+### Cloud messaging
+
+When using the app for the first time you will be requested to allow notifications. Allowing this will give a fcm token. The token is stored on firebase. Later on, when a todo is nearing it's 5 minute deadline, a POST request will be made to a firebase function called `sendNotifications`. This function will get the current users tokens and send a cloud message to all devices/browsers that the user has allowed.
