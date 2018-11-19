@@ -10,8 +10,12 @@
   "dependencies": {
     "cors": "^2.8.5",
     "date-fns": "^1.29.0",
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.7.0",
     "firebase": "^5.5.7",
     "lodash": "^4.17.11",
+    "mockdate": "^2.0.2",
+    "proxyquire": "^2.1.0",
     "react": "next",
     "react-bs-notifier": "^5.0.0",
     "react-datetime-picker": "^2.0.0",

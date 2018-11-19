@@ -1,6 +1,6 @@
 import stringHash from "string-hash";
-import { format, isFuture as _isFuture, differenceInMinutes, isAfter, distanceInWordsToNow } from "date-fns";
-import { PRIORITY_COLOR, PRIORITY } from "../../constants";
+import { format, differenceInMinutes, isAfter, distanceInWordsToNow } from "date-fns";
+import { PRIORITY_COLOR, PRIORITY, DATETIME_COLOR } from "../../constants";
 import { START_TIMER, STOP_TIMER } from 'redux-timer-middleware';
 
 // ACTIONS
@@ -8,19 +8,26 @@ export const UPDATE_TIME_FIELDS = 'UPDATE_TIME_FIELDS' // selectTodos changes ba
 
 // SELECTORS
 export const priorityDesc = (ta, tb) => tb.priority - ta.priority
-export const isCompleted = t => t.hasOwnProperty('completed') && t.completed
 export const isPending = t => !t.hasOwnProperty('completed') || !t.completed
-export const isTodo = t => t !== null && t.hasOwnProperty('id') && t.hasOwnProperty('text') && t.hasOwnProperty('datetime')
-export const isFuture = t => _isFuture(t.datetime)
-export const isDanger = t => differenceInMinutes(Date.now(), t.datetime) < 5
+export const isPast = t => isAfter(new Date(), t.datetime)
+export const isTodo = t => t !== null
+    && t.hasOwnProperty('id')
+    && t.hasOwnProperty('text')
+    && t.hasOwnProperty('datetime')
+    && t.hasOwnProperty('priority')
+export const shouldNotify = t => {
+    const dfrc = differenceInMinutes(t.datetime, new Date())
+    return dfrc < 5 && dfrc > 0
+}
 export const selectPrioritycolor = t => PRIORITY_COLOR[t.priority]
 export const selectPrioritytext = t => PRIORITY[t.priority]
-export const selectTodoDatecolor = t => isAfter(Date.now(), t.datetime)
-    ? 'danger'
+export const selectTodoDatetimecolor = t => DATETIME_COLOR[selectTodoDatetimecolorIndex(t)]
+export const selectTodoDatetimecolorIndex = t => isPast(t)
+    ? 0
     : (
-        differenceInMinutes(t.datetime, Date.now()) < 5
-            ? 'warning'
-            : 'success'
+        shouldNotify(t)
+            ? 1
+            : 2
     )
 export const selectTodoDateHumanReadable = t => distanceInWordsToNow(t.datetime, { includeSeconds: true, addSuffix: true })
 export function selectTodos(todos, uid) {
@@ -29,25 +36,23 @@ export function selectTodos(todos, uid) {
         .filter(isTodo)
         .filter(isPending)
         .sort(priorityDesc)
-        .map(
-            t => ({
-                ...t,
-                prioritycolor: selectPrioritycolor(t),
-                prioritytext: selectPrioritytext(t),
-                datetimecolor: selectTodoDatecolor(t),
-                datetimetext: selectTodoDateHumanReadable(t)
-            })
-        )
+        .map(createTodoTimeFields)
 }
 
 
 /// CREATORS
-export const createTodo = payload => ({
-    ...payload,
-    id: stringHash(payload.text),
-    datetime: format(payload.datetime)
+export const createTodo = t => ({
+    ...t,
+    id: stringHash(t.text),
+    datetime: format(t.datetime)
 })
-
+export const createTodoTimeFields = t => ({
+    ...t,
+    prioritycolor: selectPrioritycolor(t),
+    prioritytext: selectPrioritytext(t),
+    datetimecolor: selectTodoDatetimecolor(t),
+    datetimetext: selectTodoDateHumanReadable(t)
+})
 // ACTION CREATORS
 export const createUpdateTimeFields = () => ({
     type: UPDATE_TIME_FIELDS

@@ -28,7 +28,7 @@ export const TodoFormController = ({ addTodo, profile, login, uid }) => {
   }
 
   function onAdd() {
-    if (todo.text === "" || profile.isLoading) return;
+    if (todo.text === "" || !profile.isLoaded) return;
     if(profile.isEmpty){
       login()
       return;

@@ -4,7 +4,6 @@ import ReactDOM from "react-dom";
 import { Provider } from "react-redux"
 import TodoList from "./components/TodoList/";
 import TodoForm from "./components/TodoForm/";
-import configureStore from "./redux/configureStore";
 import { BottomNav } from "./components/BottomNav";
 import { firebaseConnect } from "react-redux-firebase";
 import { compose } from 'redux';
@@ -14,6 +13,7 @@ import { createRemoveNotification, createNotification } from "./redux/modules/no
 import { createTodo, createStartUpdateTimeFields, createStopUpdateTimeFields } from "./redux/modules/todos";
 import { isInitialising } from "./redux/modules/profile";
 import Spinner from 'react-spinkit';
+import { store } from "./store";
 
 const AppController = (props) => {
   const { startTimer, stopTimer, startCloudMessaging, stopCloudMessaging, setNotificationToken, uid, profile } = props
@@ -132,9 +132,6 @@ export const App = compose(
   )
 )(AppController)
 
-const store = configureStore(
-  {}
-);
 const rootElement = document.getElementById("root");
 ReactDOM.render(<Provider store={store}><App /></Provider>, rootElement);
 

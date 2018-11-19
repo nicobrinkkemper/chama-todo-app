@@ -3,6 +3,7 @@ import TodoView from './TodoView/TodoView'
 
 export function TodoController(props) {
     const { notify, onCompleteTodo, id } = props;
+
     useEffect(
         () => {
             if (props.datetimecolor === 'warning') notify()
