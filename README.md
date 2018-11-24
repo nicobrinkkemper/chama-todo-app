@@ -7,7 +7,7 @@ This project was done for Chama. Read the original assignment [here](https://git
 
 **React** is used for the Controller/View layer. Furthermore, `create-react-app` is used to set up the development environment. This is really helpful because features such as reactive dom binding and JSX work out of the box.
 
-**Redux** is used for our Model layer which serves to mirror our **Firebase Real-time Database**. **[React-firebase-redux](https://github.com/prescottprue/react-redux-firebase)** is used to handle most of that logic. This is why `modules/profile` and `modules/todos` contain selectors and creators, but no reducers. Cloud messaging is handled by some event listeners and a simple array reducer in `modules/notifications`.
+**Redux** is used for our Model/Update layer which serves to mirror our **Firebase Real-time Database**. **[React-firebase-redux](https://github.com/prescottprue/react-redux-firebase)** is used to handle most of that logic. This is why `modules/profile` and `modules/todos` contain selectors and creators, but no reducers. Cloud messaging is handled by some event listeners and a simple array reducer in `modules/notifications`.
 
 **[React Hooks](https://www.youtube.com/watch?v=dpw9EHDh2bM)** allows functions to hook in to React state management and side-effect handling. The `TodoFormController` uses `useState` to keep temporary form state, only hitting the store when a `Todo` is submitted. Furthermore, the `TodoController` uses `useEffect` to send a cloud message when a `Todo` is upcoming in 5 minutes, 4 minutes, etc. Lastly, our `AppController` uses `useEffect` to start-up a global timer to refresh `Todo.datetimetext` every 10 sec, and configure cloud messaging event listeners.
 
